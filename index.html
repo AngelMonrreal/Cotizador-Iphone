@@ -85,7 +85,6 @@
       justify-content: space-between;
       margin-top: 12px;
       font-size: 15px;
-      color: #e5e7eb;
     }
 
     .ganancia {
@@ -120,20 +119,20 @@
     <button id="btnAdmin" onclick="mostrarAdmin()">Administrador</button>
   </div>
 
-  <!-- CLIENTE -->
+  <!-- CLIENTE (COMPRA) -->
   <div class="panel" id="clientePanel">
-    <div class="label">Precio de venta</div>
-    <div class="precio" id="precioVenta">—</div>
+    <div class="label">Te lo puedo comprar en</div>
+    <div class="precio" id="precioCompraCliente">—</div>
   </div>
 
   <!-- ADMIN -->
   <div class="panel hidden" id="adminPanel">
     <div class="row">
       <span>Máximo a pagar</span>
-      <span id="precioCompra">—</span>
+      <span id="precioCompraAdmin">—</span>
     </div>
     <div class="row">
-      <span>Precio sugerido</span>
+      <span>Precio sugerido venta</span>
       <span id="precioVentaAdmin">—</span>
     </div>
     <div class="row ganancia">
@@ -162,9 +161,12 @@
         const compra = precios[key][0];
         const venta = precios[key][1];
 
-        document.getElementById("precioVenta").textContent = `$${venta}`;
+        // Cliente
+        document.getElementById("precioCompraCliente").textContent = `$${compra}`;
+
+        // Admin
+        document.getElementById("precioCompraAdmin").textContent = `$${compra}`;
         document.getElementById("precioVentaAdmin").textContent = `$${venta}`;
-        document.getElementById("precioCompra").textContent = `$${compra}`;
         document.getElementById("ganancia").textContent = `$${venta - compra}`;
       }
     }
@@ -186,6 +188,3 @@
 
 </body>
 </html>
-
-
-
