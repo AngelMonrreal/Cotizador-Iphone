@@ -6,35 +6,126 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+*{
+  box-sizing:border-box;
+}
+
 body{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  background:#0f172a;color:#e5e7eb;padding:20px
+  background:#0f172a;
+  color:#e5e7eb;
+  padding:20px;
+  display:flex;
+  justify-content:center;
 }
-h1{text-align:center;font-size:22px;margin-bottom:20px}
+
+.app{
+  width:100%;
+  max-width:420px;
+}
+
+h1{
+  text-align:center;
+  font-size:22px;
+  margin-bottom:20px;
+  color:#f8fafc;
+}
+
 select,input,button{
-  width:100%;padding:12px;margin-top:10px;
-  border-radius:12px;border:1px solid #334155;
-  background:#020617;color:#e5e7eb;font-size:15px
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:12px;
+  border:1px solid #334155;
+  background:#020617;
+  color:#e5e7eb;
+  font-size:15px;
 }
-button.active{background:#1e40af;border-color:#1e40af}
+
+button{
+  cursor:pointer;
+}
+
+button.active{
+  background:#1e40af;
+  border-color:#1e40af;
+}
+
+.tabs{
+  display:flex;
+  gap:10px;
+  margin-top:15px;
+}
+
+.tabs button{
+  margin-top:0;
+}
+
 .panel{
-  background:#020617;border:1px solid #334155;
-  border-radius:16px;padding:18px;margin-top:15px
+  background:#020617;
+  border:1px solid #334155;
+  border-radius:16px;
+  padding:18px;
+  margin-top:15px;
 }
-.hidden{display:none}
-.label{text-align:center;color:#94a3b8;font-size:14px}
-.precio{text-align:center;font-size:32px;font-weight:700;margin-top:5px}
-.row{display:flex;justify-content:space-between;margin-top:10px}
-.ganancia{color:#22c55e;font-weight:600}
-.small{font-size:13px;color:#94a3b8}
+
+.hidden{
+  display:none;
+}
+
+.label{
+  text-align:center;
+  color:#94a3b8;
+  font-size:14px;
+}
+
+.precio{
+  text-align:center;
+  font-size:32px;
+  font-weight:700;
+  margin-top:6px;
+  color:#f8fafc;
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:12px;
+  font-size:15px;
+}
+
+.ganancia{
+  color:#22c55e;
+  font-weight:600;
+  border-top:1px solid #334155;
+  padding-top:12px;
+  margin-top:14px;
+}
+
+hr{
+  border:none;
+  border-top:1px solid #334155;
+  margin:18px 0;
+}
+
+.small{
+  font-size:12px;
+  color:#94a3b8;
+  text-align:center;
+  margin-top:8px;
+}
 </style>
 </head>
 
 <body>
 
+<div class="app">
+
 <h1>Cotizador iPhone</h1>
 
 <select id="modelo" onchange="calcular()"></select>
+
 <select id="gb" onchange="calcular()">
   <option value="">Capacidad</option>
   <option value="64">64 GB</option>
@@ -42,8 +133,10 @@ button.active{background:#1e40af;border-color:#1e40af}
   <option value="256">256 GB</option>
 </select>
 
-<button onclick="mostrarCliente()" id="btnCliente" class="active">Cliente</button>
-<button onclick="pedirPin()" id="btnAdmin">Administrador</button>
+<div class="tabs">
+  <button id="btnCliente" class="active" onclick="mostrarCliente()">Cliente</button>
+  <button id="btnAdmin" onclick="pedirPin()">Administrador</button>
+</div>
 
 <!-- CLIENTE -->
 <div class="panel" id="clientePanel">
@@ -60,26 +153,40 @@ button.active{background:#1e40af;border-color:#1e40af}
 
 <!-- ADMIN -->
 <div class="panel hidden" id="adminPanel">
-  <div class="row"><span>Máximo a pagar</span><span id="precioCompraAdmin">—</span></div>
-  <div class="row"><span>Precio venta</span><span id="precioVentaAdmin">—</span></div>
-  <div class="row ganancia"><span>Ganancia</span><span id="ganancia">—</span></div>
+  <div class="row">
+    <span>Máximo a pagar</span>
+    <span id="precioCompraAdmin">—</span>
+  </div>
 
-  <hr style="margin:15px 0;border-color:#334155">
+  <div class="row">
+    <span>Precio venta</span>
+    <span id="precioVentaAdmin">—</span>
+  </div>
+
+  <div class="row ganancia">
+    <span>Ganancia</span>
+    <span id="ganancia">—</span>
+  </div>
+
+  <hr>
 
   <div class="label">Editar / Agregar modelo</div>
+
   <input id="newModelo" placeholder="Modelo (ej. i13)">
   <input id="newGB" placeholder="GB (64,128,256)">
   <input id="newCompra" placeholder="Precio compra">
   <input id="newVenta" placeholder="Precio venta">
+
   <button onclick="guardarModelo()">Guardar</button>
 
-  <div class="small">Se guarda automáticamente</div>
+  <div class="small">Los cambios se guardan automáticamente</div>
+</div>
+
 </div>
 
 <script>
 const PIN = "2303";
 
-// PRECIOS (se cargan del celular)
 let precios = JSON.parse(localStorage.getItem("precios")) || {
   "i11-64":[4200,5200],
   "i11-128":[4700,5800],
@@ -95,15 +202,14 @@ function cargarModelos(){
   [...new Set(Object.keys(precios).map(k=>k.split("-")[0]))]
   .forEach(m=>{
     const o=document.createElement("option");
-    o.value=m;o.textContent="iPhone "+m.replace("i","");
+    o.value=m;
+    o.textContent="iPhone "+m.replace("i","");
     sel.appendChild(o);
   });
 }
 
 function calcular(){
-  const m=modelo.value;
-  const g=gb.value;
-  const k=m+"-"+g;
+  const k=modelo.value+"-"+gb.value;
   if(precios[k]){
     const [c,v]=precios[k];
     precioCompraCliente.textContent="$"+c;
