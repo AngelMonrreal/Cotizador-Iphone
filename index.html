@@ -1,190 +1,155 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Cotizador iPhone</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Cotizador iPhone</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #0f172a;
-      color: #e5e7eb;
-      padding: 20px;
-    }
-
-    h1 {
-      text-align: center;
-      font-size: 22px;
-      font-weight: 600;
-      margin-bottom: 25px;
-      color: #f8fafc;
-    }
-
-    select {
-      width: 100%;
-      padding: 14px;
-      margin-bottom: 14px;
-      border-radius: 12px;
-      border: 1px solid #334155;
-      background: #020617;
-      color: #e5e7eb;
-      font-size: 16px;
-    }
-
-    .tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
-    .tabs button {
-      flex: 1;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid #334155;
-      background: #020617;
-      color: #cbd5f5;
-      font-size: 14px;
-    }
-
-    .tabs button.active {
-      background: #1e40af;
-      border-color: #1e40af;
-      color: #f8fafc;
-      font-weight: 600;
-    }
-
-    .panel {
-      background: #020617;
-      border: 1px solid #334155;
-      border-radius: 16px;
-      padding: 18px;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .label {
-      text-align: center;
-      color: #94a3b8;
-      font-size: 14px;
-      margin-bottom: 6px;
-    }
-
-    .precio {
-      text-align: center;
-      font-size: 34px;
-      font-weight: 700;
-      color: #f8fafc;
-    }
-
-    .row {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 12px;
-      font-size: 15px;
-    }
-
-    .ganancia {
-      font-weight: 600;
-      color: #22c55e;
-      border-top: 1px solid #334155;
-      padding-top: 12px;
-      margin-top: 14px;
-    }
-  </style>
+<style>
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:#0f172a;color:#e5e7eb;padding:20px
+}
+h1{text-align:center;font-size:22px;margin-bottom:20px}
+select,input,button{
+  width:100%;padding:12px;margin-top:10px;
+  border-radius:12px;border:1px solid #334155;
+  background:#020617;color:#e5e7eb;font-size:15px
+}
+button.active{background:#1e40af;border-color:#1e40af}
+.panel{
+  background:#020617;border:1px solid #334155;
+  border-radius:16px;padding:18px;margin-top:15px
+}
+.hidden{display:none}
+.label{text-align:center;color:#94a3b8;font-size:14px}
+.precio{text-align:center;font-size:32px;font-weight:700;margin-top:5px}
+.row{display:flex;justify-content:space-between;margin-top:10px}
+.ganancia{color:#22c55e;font-weight:600}
+.small{font-size:13px;color:#94a3b8}
+</style>
 </head>
 
 <body>
 
-  <h1>Cotizador iPhone</h1>
+<h1>Cotizador iPhone</h1>
 
-  <select id="modelo" onchange="calcular()">
-    <option value="">Modelo</option>
-    <option value="i11">iPhone 11</option>
-    <option value="i12">iPhone 12</option>
-  </select>
+<select id="modelo" onchange="calcular()"></select>
+<select id="gb" onchange="calcular()">
+  <option value="">Capacidad</option>
+  <option value="64">64 GB</option>
+  <option value="128">128 GB</option>
+  <option value="256">256 GB</option>
+</select>
 
-  <select id="gb" onchange="calcular()">
-    <option value="">Capacidad</option>
-    <option value="64">64 GB</option>
-    <option value="128">128 GB</option>
-    <option value="256">256 GB</option>
-  </select>
+<button onclick="mostrarCliente()" id="btnCliente" class="active">Cliente</button>
+<button onclick="pedirPin()" id="btnAdmin">Administrador</button>
 
-  <div class="tabs">
-    <button id="btnCliente" class="active" onclick="mostrarCliente()">Cliente</button>
-    <button id="btnAdmin" onclick="mostrarAdmin()">Administrador</button>
-  </div>
+<!-- CLIENTE -->
+<div class="panel" id="clientePanel">
+  <div class="label">Te lo puedo comprar en</div>
+  <div class="precio" id="precioCompraCliente">—</div>
+</div>
 
-  <!-- CLIENTE (COMPRA) -->
-  <div class="panel" id="clientePanel">
-    <div class="label">Te lo puedo comprar en</div>
-    <div class="precio" id="precioCompraCliente">—</div>
-  </div>
+<!-- LOGIN ADMIN -->
+<div class="panel hidden" id="loginPanel">
+  <div class="label">Contraseña administrador</div>
+  <input type="password" id="pinInput" placeholder="PIN">
+  <button onclick="validarPin()">Entrar</button>
+</div>
 
-  <!-- ADMIN -->
-  <div class="panel hidden" id="adminPanel">
-    <div class="row">
-      <span>Máximo a pagar</span>
-      <span id="precioCompraAdmin">—</span>
-    </div>
-    <div class="row">
-      <span>Precio sugerido venta</span>
-      <span id="precioVentaAdmin">—</span>
-    </div>
-    <div class="row ganancia">
-      <span>Ganancia estimada</span>
-      <span id="ganancia">—</span>
-    </div>
-  </div>
+<!-- ADMIN -->
+<div class="panel hidden" id="adminPanel">
+  <div class="row"><span>Máximo a pagar</span><span id="precioCompraAdmin">—</span></div>
+  <div class="row"><span>Precio venta</span><span id="precioVentaAdmin">—</span></div>
+  <div class="row ganancia"><span>Ganancia</span><span id="ganancia">—</span></div>
 
-  <script>
-    const precios = {
-      "i11-64": [4200, 5200],
-      "i11-128": [4700, 5800],
-      "i11-256": [5200, 6500],
+  <hr style="margin:15px 0;border-color:#334155">
 
-      "i12-64": [5500, 6800],
-      "i12-128": [6000, 7500],
-      "i12-256": [6500, 8200]
-    };
+  <div class="label">Editar / Agregar modelo</div>
+  <input id="newModelo" placeholder="Modelo (ej. i13)">
+  <input id="newGB" placeholder="GB (64,128,256)">
+  <input id="newCompra" placeholder="Precio compra">
+  <input id="newVenta" placeholder="Precio venta">
+  <button onclick="guardarModelo()">Guardar</button>
 
-    function calcular() {
-      const modelo = document.getElementById("modelo").value;
-      const gb = document.getElementById("gb").value;
-      const key = modelo + "-" + gb;
+  <div class="small">Se guarda automáticamente</div>
+</div>
 
-      if (precios[key]) {
-        const compra = precios[key][0];
-        const venta = precios[key][1];
+<script>
+const PIN = "2303";
 
-        // Cliente
-        document.getElementById("precioCompraCliente").textContent = `$${compra}`;
+// PRECIOS (se cargan del celular)
+let precios = JSON.parse(localStorage.getItem("precios")) || {
+  "i11-64":[4200,5200],
+  "i11-128":[4700,5800],
+  "i11-256":[5200,6500],
+  "i12-64":[5500,6800],
+  "i12-128":[6000,7500],
+  "i12-256":[6500,8200]
+};
 
-        // Admin
-        document.getElementById("precioCompraAdmin").textContent = `$${compra}`;
-        document.getElementById("precioVentaAdmin").textContent = `$${venta}`;
-        document.getElementById("ganancia").textContent = `$${venta - compra}`;
-      }
-    }
+function cargarModelos(){
+  const sel=document.getElementById("modelo");
+  sel.innerHTML='<option value="">Modelo</option>';
+  [...new Set(Object.keys(precios).map(k=>k.split("-")[0]))]
+  .forEach(m=>{
+    const o=document.createElement("option");
+    o.value=m;o.textContent="iPhone "+m.replace("i","");
+    sel.appendChild(o);
+  });
+}
 
-    function mostrarCliente() {
-      clientePanel.classList.remove("hidden");
-      adminPanel.classList.add("hidden");
-      btnCliente.classList.add("active");
-      btnAdmin.classList.remove("active");
-    }
+function calcular(){
+  const m=modelo.value;
+  const g=gb.value;
+  const k=m+"-"+g;
+  if(precios[k]){
+    const [c,v]=precios[k];
+    precioCompraCliente.textContent="$"+c;
+    precioCompraAdmin.textContent="$"+c;
+    precioVentaAdmin.textContent="$"+v;
+    ganancia.textContent="$"+(v-c);
+  }
+}
 
-    function mostrarAdmin() {
-      clientePanel.classList.add("hidden");
-      adminPanel.classList.remove("hidden");
-      btnAdmin.classList.add("active");
-      btnCliente.classList.remove("active");
-    }
-  </script>
+function mostrarCliente(){
+  clientePanel.classList.remove("hidden");
+  adminPanel.classList.add("hidden");
+  loginPanel.classList.add("hidden");
+}
+
+function pedirPin(){
+  clientePanel.classList.add("hidden");
+  loginPanel.classList.remove("hidden");
+}
+
+function validarPin(){
+  if(pinInput.value===PIN){
+    loginPanel.classList.add("hidden");
+    adminPanel.classList.remove("hidden");
+    pinInput.value="";
+  }else{
+    alert("PIN incorrecto");
+  }
+}
+
+function guardarModelo(){
+  const m=newModelo.value;
+  const g=newGB.value;
+  const c=parseInt(newCompra.value);
+  const v=parseInt(newVenta.value);
+  if(m && g && c && v){
+    precios[m+"-"+g]=[c,v];
+    localStorage.setItem("precios",JSON.stringify(precios));
+    cargarModelos();
+    alert("Guardado");
+    newModelo.value=newGB.value=newCompra.value=newVenta.value="";
+  }
+}
+
+cargarModelos();
+</script>
 
 </body>
 </html>
