@@ -5,6 +5,11 @@
 <title>Compra y venta de electrónica</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- ICONO PARA AGREGAR A INICIO -->
+<link rel="apple-touch-icon" sizes="180x180" href="logoinicio.jpeg">
+<link rel="icon" type="image/jpeg" sizes="32x32" href="logoinicio.jpeg">
+<link rel="icon" type="image/jpeg" sizes="16x16" href="logoinicio.jpeg">
+
 <style>
 *{box-sizing:border-box}
 
@@ -94,7 +99,8 @@ hr{
   text-align:center;
   font-size:12px;
   color:#64748b;
-  margin-top:2px;
+  margin-bottom:2px;
+  font-weight:600;
 }
 </style>
 </head>
@@ -102,10 +108,10 @@ hr{
 <body>
 <div class="app">
 
-<!-- LOGO + TEXTO -->
+<!-- TEXTO ARRIBA + LOGO -->
 <div style="text-align:center;margin-bottom:8px">
-  <img src="logomonmex.png.jpeg" alt="Logo" style="width:180px;height:auto;border-radius:20px">
   <div class="small">Compra y venta de electrónica</div>
+  <img src="logomonmex.png.jpeg" alt="Logo" style="width:180px;height:auto;border-radius:20px">
 </div>
 
 <select id="modelo" onchange="calcular()"></select>
@@ -174,28 +180,22 @@ hr{
 <script>
 const PIN="2303";
 
-/* MODELOS LIMPIOS */
 let precios=JSON.parse(localStorage.getItem("precios"))||{
   "i11-64":[4200,5200],
   "i11-128":[4700,5800],
   "i11-256":[5200,6500],
-
   "i13-128":[8500,9800],
   "i13p-256":[12500,14500],
   "i13pm-256":[13500,15800]
 };
 
 function nombreBonito(m){
-  return m
-    .replace("pm"," Pro Max")
-    .replace("p"," Pro")
-    .replace("i","");
+  return m.replace("pm"," Pro Max").replace("p"," Pro").replace("i","");
 }
 
 function cargarModelos(){
   modelo.innerHTML='<option value="">Modelo</option>';
   [...new Set(Object.keys(precios).map(k=>k.split("-")[0]))]
-    .filter(m=>m.startsWith("i"))
     .forEach(m=>{
       let o=document.createElement("option");
       o.value=m;
@@ -245,37 +245,22 @@ function guardarModelo(){
   let c=parseInt(newCompra.value);
   let v=parseInt(newVenta.value);
 
-  if(!m || !g || !c || !v){
-    alert("Completa todos los campos");
-    return;
-  }
+  if(!m||!g||!c||!v){alert("Completa todos los campos");return;}
 
   precios[m+"-"+g]=[c,v];
   localStorage.setItem("precios",JSON.stringify(precios));
-
   cargarModelos();
-  modelo.value=m;
-  gb.value=g;
-  calcular();
-
+  modelo.value=m;gb.value=g;calcular();
   newModelo.value=newGB.value=newCompra.value=newVenta.value="";
-  alert("Modelo guardado");
 }
 
 function eliminarModelo(){
-  if(!modelo.value || !gb.value){
-    alert("Selecciona modelo y capacidad");
-    return;
-  }
-
+  if(!modelo.value||!gb.value){alert("Selecciona modelo y capacidad");return;}
   let key=modelo.value+"-"+gb.value;
-  if(confirm("¿Eliminar iPhone "+nombreBonito(modelo.value)+" "+gb.value+"GB?")){
+  if(confirm("¿Eliminar este modelo?")){
     delete precios[key];
     localStorage.setItem("precios",JSON.stringify(precios));
-    gb.value="";
-    cargarModelos();
-    calcular();
-    alert("Eliminado");
+    gb.value="";cargarModelos();calcular();
   }
 }
 
