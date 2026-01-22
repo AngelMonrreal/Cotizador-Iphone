@@ -3,109 +3,78 @@
 <head>
 <meta charset="UTF-8">
 
-<!-- NOMBRE APP -->
 <title>MONMEX</title>
 <meta name="apple-mobile-web-app-title" content="MONMEX">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-<!-- ICONO APP -->
-<link rel="apple-touch-icon" sizes="180x180" href="logoinicio.jpeg">
-<link rel="icon" type="image/jpeg" href="logoinicio.jpeg">
+<link rel="apple-touch-icon" href="logoinicio.jpeg">
+<link rel="icon" href="logoinicio.jpeg">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 *{box-sizing:border-box}
-
 body{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  background:#ffffff;
-  color:#0f172a;
+  background:#fff;
   padding:20px;
   display:flex;
   justify-content:center;
 }
-
-.app{
-  width:100%;
-  max-width:420px;
-}
-
+.app{max-width:420px;width:100%}
 select,input,button{
   width:100%;
   padding:12px;
   margin-top:10px;
   border-radius:12px;
   border:1px solid #cbd5e1;
-  font-size:15px;
-  background:#ffffff;
 }
-
-button{
-  background:#0f172a;
-  color:white;
-  cursor:pointer;
-}
-
-button.eliminar{
-  background:#dc2626;
-}
-
-.tabs{
-  display:flex;
-  gap:10px;
-  margin-top:14px;
-}
-
+button{background:#0f172a;color:#fff}
+button.eliminar{background:#dc2626}
+.tabs{display:flex;gap:10px;margin-top:14px}
 .panel{
-  border:1px solid #e2e8f0;
+  border:1px solid #e5e7eb;
   border-radius:16px;
-  padding:18px;
+  padding:16px;
   margin-top:14px;
 }
-
 .hidden{display:none}
-
-.label{
-  text-align:center;
-  font-size:14px;
-  color:#475569;
-}
-
-.precio{
-  text-align:center;
-  font-size:34px;
-  font-weight:700;
-  margin-top:6px;
-}
-
-.row{
-  display:flex;
-  justify-content:space-between;
-  margin-top:12px;
-}
-
+.precio{text-align:center;font-size:34px;font-weight:700}
+.label{text-align:center;color:#475569}
+.row{display:flex;justify-content:space-between;margin-top:10px}
 .ganancia{
   color:#16a34a;
   font-weight:600;
-  border-top:1px solid #e2e8f0;
-  padding-top:12px;
-  margin-top:14px;
+  border-top:1px solid #e5e7eb;
+  padding-top:10px;
+  margin-top:12px
 }
+.small{text-align:center;font-size:12px;color:#64748b}
 
-hr{
-  border:none;
-  border-top:1px solid #e2e8f0;
-  margin:16px 0;
+/* ADMIN MODELOS COMPACTO */
+.model-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  padding:8px 10px;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  margin-top:6px;
+  font-size:13px;
 }
-
-.small{
-  text-align:center;
+.model-info{
+  line-height:1.2;
+}
+.model-actions{
+  display:flex;
+  gap:6px;
+}
+.model-actions button{
+  padding:6px 10px;
   font-size:12px;
-  color:#64748b;
-  margin-top:2px;
+  border-radius:8px;
 }
 </style>
 </head>
@@ -113,9 +82,9 @@ hr{
 <body>
 <div class="app">
 
-<!-- LOGO + TEXTO -->
-<div style="text-align:center;margin-bottom:8px">
-  <img src="logomonmex.png.jpeg" alt="Logo" style="width:180px;height:auto;border-radius:20px">
+<!-- LOGO -->
+<div style="text-align:center;margin-bottom:6px">
+  <img src="logomonmex.png.jpeg" style="width:200px;border-radius:20px">
   <div class="small">Compra y venta de electrónica</div>
 </div>
 
@@ -138,47 +107,38 @@ hr{
 
 <!-- CLIENTE -->
 <div class="panel" id="clientePanel">
-  <div class="label">Te lo puedo comprar en</div>
+  <div class="label">Costo Evaluado</div>
   <div class="precio" id="precioCompraCliente">—</div>
 </div>
 
-<!-- LOGIN ADMIN -->
+<!-- LOGIN -->
 <div class="panel hidden" id="loginPanel">
-  <div class="label">PIN Administrador</div>
   <input type="password" id="pinInput" placeholder="PIN">
   <button onclick="validarPin()">Entrar</button>
 </div>
 
 <!-- ADMIN -->
 <div class="panel hidden" id="adminPanel">
-  <div class="row">
-    <span>Máximo a pagar</span>
-    <span id="precioCompraAdmin">—</span>
-  </div>
 
-  <div class="row">
-    <span>Precio venta</span>
-    <span id="precioVentaAdmin">—</span>
-  </div>
-
-  <div class="row ganancia">
-    <span>Ganancia</span>
-    <span id="ganancia">—</span>
-  </div>
+  <div class="row"><span>Compra</span><span id="precioCompraAdmin">—</span></div>
+  <div class="row"><span>Venta</span><span id="precioVentaAdmin">—</span></div>
+  <div class="row ganancia"><span>Ganancia</span><span id="ganancia">—</span></div>
 
   <hr>
 
-  <div class="label">Agregar / Editar modelo</div>
-  <input id="newModelo" placeholder="Modelo (i13, i13p, i13pm)">
-  <input id="newGB" placeholder="GB (64,128,256,512,1024,2048)">
+  <input id="newModelo" placeholder="Modelo (i17, i17p, i17pm)">
+  <input id="newGB" placeholder="GB">
   <input id="newCompra" placeholder="Precio compra">
   <input id="newVenta" placeholder="Precio venta">
+
   <button onclick="guardarModelo()">Guardar / Actualizar</button>
+  <button onclick="abrirAdminModelos()">Administrar modelos</button>
 
-  <button class="eliminar" onclick="eliminarModelo()">Eliminar modelo seleccionado</button>
-
-  <div class="small">i13 = normal · i13p = Pro · i13pm = Pro Max</div>
+  <div class="small">p = Pro · pm = Pro Max</div>
 </div>
+
+<!-- ADMIN MODELOS -->
+<div class="panel hidden" id="panelModelos"></div>
 
 </div>
 
@@ -186,33 +146,32 @@ hr{
 const PIN="2303";
 
 let precios=JSON.parse(localStorage.getItem("precios"))||{
-  "i11-64":[4200,5200],
-  "i11-128":[4700,5800],
-  "i11-256":[5200,6500],
   "i13-128":[8500,9800],
   "i13p-256":[12500,14500],
   "i13pm-256":[13500,15800]
 };
 
 function nombreBonito(m){
-  return m.replace("pm"," Pro Max").replace("p"," Pro").replace("i","");
+  let num=m.replace(/\D/g,"");
+  if(m.endsWith("pm")) return num+" Pro Max";
+  if(m.endsWith("p")) return num+" Pro";
+  return num;
 }
 
 function cargarModelos(){
   modelo.innerHTML='<option value="">Modelo</option>';
-  [...new Set(Object.keys(precios).map(k=>k.split("-")[0]))]
-    .forEach(m=>{
-      let o=document.createElement("option");
-      o.value=m;
-      o.textContent="iPhone "+nombreBonito(m);
-      modelo.appendChild(o);
-    });
+  [...new Set(Object.keys(precios).map(k=>k.split("-")[0]))].forEach(m=>{
+    let o=document.createElement("option");
+    o.value=m;
+    o.textContent="iPhone "+nombreBonito(m);
+    modelo.appendChild(o);
+  });
 }
 
 function calcular(){
-  let key=modelo.value+"-"+gb.value;
-  if(precios[key]){
-    let [c,v]=precios[key];
+  let k=modelo.value+"-"+gb.value;
+  if(precios[k]){
+    let [c,v]=precios[k];
     precioCompraCliente.textContent="$"+c;
     precioCompraAdmin.textContent="$"+c;
     precioVentaAdmin.textContent="$"+v;
@@ -229,6 +188,7 @@ function mostrarCliente(){
   clientePanel.classList.remove("hidden");
   adminPanel.classList.add("hidden");
   loginPanel.classList.add("hidden");
+  panelModelos.classList.add("hidden");
 }
 
 function pedirPin(){
@@ -249,27 +209,59 @@ function guardarModelo(){
   let g=newGB.value.trim();
   let c=parseInt(newCompra.value);
   let v=parseInt(newVenta.value);
-
-  if(!m||!g||!c||!v){alert("Completa todos");return;}
-
+  if(!m||!g||!c||!v){alert("Completa todo");return;}
   precios[m+"-"+g]=[c,v];
   localStorage.setItem("precios",JSON.stringify(precios));
   cargarModelos();
-  modelo.value=m;
-  gb.value=g;
-  calcular();
   newModelo.value=newGB.value=newCompra.value=newVenta.value="";
 }
 
-function eliminarModelo(){
-  if(!modelo.value||!gb.value){alert("Selecciona modelo y GB");return;}
-  let key=modelo.value+"-"+gb.value;
+/* TOGGLE ADMIN MODELOS */
+function abrirAdminModelos(){
+
+  if(!panelModelos.classList.contains("hidden")){
+    panelModelos.classList.add("hidden");
+    return;
+  }
+
+  panelModelos.innerHTML="";
+  panelModelos.classList.remove("hidden");
+
+  Object.keys(precios).forEach(k=>{
+    let [m,g]=k.split("-");
+    let [c,v]=precios[k];
+
+    panelModelos.innerHTML+=`
+      <div class="model-row">
+        <div class="model-info">
+          <b>iPhone ${nombreBonito(m)}</b> · ${g}GB<br>
+          $${c} → $${v}
+        </div>
+        <div class="model-actions">
+          <button onclick="editarModelo('${k}')">Editar</button>
+          <button class="eliminar" onclick="eliminarClave('${k}')">X</button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function editarModelo(k){
+  let [m,g]=k.split("-");
+  let [c,v]=precios[k];
+  newModelo.value=m;
+  newGB.value=g;
+  newCompra.value=c;
+  newVenta.value=v;
+  panelModelos.classList.add("hidden");
+}
+
+function eliminarClave(k){
   if(confirm("¿Eliminar modelo?")){
-    delete precios[key];
+    delete precios[k];
     localStorage.setItem("precios",JSON.stringify(precios));
-    gb.value="";
+    abrirAdminModelos();
     cargarModelos();
-    calcular();
   }
 }
 
