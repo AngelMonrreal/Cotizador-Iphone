@@ -15,99 +15,86 @@
 
 <style>
 *{box-sizing:border-box}
+
 body{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   background:#fff;
-  padding:20px;
+  padding:16px;
   display:flex;
   justify-content:center;
 }
-.app{max-width:420px;width:100%}
+
+.app{width:100%;max-width:420px}
+
 select,input,button{
   width:100%;
-  padding:12px;
-  margin-top:10px;
-  border-radius:12px;
+  padding:10px;
+  margin-top:8px;
+  border-radius:10px;
   border:1px solid #cbd5e1;
+  font-size:14px;
 }
-button{background:#0f172a;color:#fff}
+
+button{background:#0f172a;color:#fff;cursor:pointer}
+button.admin{background:#334155}
 button.eliminar{background:#dc2626}
-.tabs{display:flex;gap:10px;margin-top:14px}
+
+.tabs{display:flex;gap:8px;margin-top:12px}
+
 .panel{
-  border:1px solid #e5e7eb;
-  border-radius:16px;
-  padding:16px;
-  margin-top:14px;
+  border:1px solid #e2e8f0;
+  border-radius:14px;
+  padding:14px;
+  margin-top:12px;
 }
+
 .hidden{display:none}
-.precio{text-align:center;font-size:34px;font-weight:700}
-.label{text-align:center;color:#475569}
-.row{display:flex;justify-content:space-between;margin-top:10px}
+
+.label{text-align:center;font-size:13px;color:#475569}
+.precio{text-align:center;font-size:30px;font-weight:700;margin-top:4px}
+
+.row{display:flex;justify-content:space-between;font-size:14px;margin-top:8px}
+
 .ganancia{
   color:#16a34a;
   font-weight:600;
-  border-top:1px solid #e5e7eb;
-  padding-top:10px;
-  margin-top:12px
+  border-top:1px solid #e2e8f0;
+  padding-top:8px;
+  margin-top:10px;
 }
-.small{text-align:center;font-size:12px;color:#64748b}
 
-/* ADMIN MODELOS COMPACTO */
-.model-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-  padding:8px 10px;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
-  margin-top:6px;
-  font-size:13px;
-}
-.model-info{
-  line-height:1.2;
-}
-.model-actions{
-  display:flex;
-  gap:6px;
-}
-.model-actions button{
-  padding:6px 10px;
-  font-size:12px;
-  border-radius:8px;
-}
+.small{text-align:center;font-size:11px;color:#64748b;margin-top:2px}
 </style>
 </head>
 
 <body>
 <div class="app">
 
-<!-- LOGO -->
 <div style="text-align:center;margin-bottom:6px">
-  <img src="logomonmex.png.jpeg" style="width:200px;border-radius:20px">
+  <img src="logomonmex.png.jpeg" style="width:170px;border-radius:18px">
   <div class="small">Compra y venta de electrónica</div>
 </div>
 
-<select id="modelo" onchange="calcular()"></select>
+<select id="producto" onchange="cargarModelos()">
+  <option value="">Producto</option>
+</select>
 
-<select id="gb" onchange="calcular()">
+<select id="modelo" onchange="cargarCapacidades()">
+  <option value="">Modelo</option>
+</select>
+
+<select id="capacidad" onchange="calcular()">
   <option value="">Capacidad</option>
-  <option value="64">64 GB</option>
-  <option value="128">128 GB</option>
-  <option value="256">256 GB</option>
-  <option value="512">512 GB</option>
-  <option value="1024">1 TB</option>
-  <option value="2048">2 TB</option>
 </select>
 
 <div class="tabs">
   <button onclick="mostrarCliente()">Cliente</button>
-  <button onclick="pedirPin()">Administrador</button>
+  <button class="btn" onclick="toggleAdmin()">Administrar modelos</button>
 </div>
 
 <!-- CLIENTE -->
 <div class="panel" id="clientePanel">
-  <div class="label">Costo Evaluado</div>
+  <div class="label">Compra Evaluada</div>
   <div class="precio" id="precioCompraCliente">—</div>
 </div>
 
@@ -119,63 +106,88 @@ button.eliminar{background:#dc2626}
 
 <!-- ADMIN -->
 <div class="panel hidden" id="adminPanel">
-
   <div class="row"><span>Compra</span><span id="precioCompraAdmin">—</span></div>
   <div class="row"><span>Venta</span><span id="precioVentaAdmin">—</span></div>
   <div class="row ganancia"><span>Ganancia</span><span id="ganancia">—</span></div>
 
   <hr>
 
-  <input id="newModelo" placeholder="Modelo (i17, i17p, i17pm)">
-  <input id="newGB" placeholder="GB">
+  <input id="newProducto" placeholder="Producto (iPhone, PlayStation)">
+  <input id="newModelo" placeholder="Modelo (PS5, 14 Pro Max)">
+  <input id="newCapacidad" placeholder="Capacidad (GB / TB)">
   <input id="newCompra" placeholder="Precio compra">
   <input id="newVenta" placeholder="Precio venta">
 
-  <button onclick="guardarModelo()">Guardar / Actualizar</button>
-  <button onclick="abrirAdminModelos()">Administrar modelos</button>
-
-  <div class="small">p = Pro · pm = Pro Max</div>
+  <button onclick="guardar()">Guardar / Actualizar</button>
+  <button class="eliminar" onclick="eliminar()">Eliminar seleccionado</button>
 </div>
-
-<!-- ADMIN MODELOS -->
-<div class="panel hidden" id="panelModelos"></div>
 
 </div>
 
 <script>
 const PIN="2303";
+let adminActivo=false;
 
-let precios=JSON.parse(localStorage.getItem("precios"))||{
-  "i13-128":[8500,9800],
-  "i13p-256":[12500,14500],
-  "i13pm-256":[13500,15800]
-};
+let data=JSON.parse(localStorage.getItem("monmex"))||[];
 
-function nombreBonito(m){
-  let num=m.replace(/\D/g,"");
-  if(m.endsWith("pm")) return num+" Pro Max";
-  if(m.endsWith("p")) return num+" Pro";
-  return num;
+function guardar(){
+  let p=newProducto.value.trim();
+  let m=newModelo.value.trim();
+  let c=newCapacidad.value.trim();
+  let buy=+newCompra.value;
+  let sell=+newVenta.value;
+  if(!p||!m||!c||!buy||!sell)return alert("Completa todo");
+
+  data=data.filter(x=>!(x.p==p&&x.m==m&&x.c==c));
+  data.push({p,m,c,buy,sell});
+  localStorage.setItem("monmex",JSON.stringify(data));
+  cargarTodo();
+  newProducto.value=newModelo.value=newCapacidad.value=newCompra.value=newVenta.value="";
+}
+
+function eliminar(){
+  data=data.filter(x=>!(x.p==producto.value&&x.m==modelo.value&&x.c==capacidad.value));
+  localStorage.setItem("monmex",JSON.stringify(data));
+  cargarTodo();
+}
+
+function cargarTodo(){
+  producto.innerHTML='<option value="">Producto</option>';
+  [...new Set(data.map(x=>x.p))].forEach(p=>{
+    let o=document.createElement("option");o.textContent=o.value=p;producto.appendChild(o);
+  });
+  modelo.innerHTML='<option value="">Modelo</option>';
+  capacidad.innerHTML='<option value="">Capacidad</option>';
+  calcular();
 }
 
 function cargarModelos(){
   modelo.innerHTML='<option value="">Modelo</option>';
-  [...new Set(Object.keys(precios).map(k=>k.split("-")[0]))].forEach(m=>{
-    let o=document.createElement("option");
-    o.value=m;
-    o.textContent="iPhone "+nombreBonito(m);
-    modelo.appendChild(o);
+  capacidad.innerHTML='<option value="">Capacidad</option>';
+  data.filter(x=>x.p==producto.value).forEach(x=>{
+    if(![...modelo.options].some(o=>o.value==x.m)){
+      let o=document.createElement("option");o.value=o.textContent=x.m;modelo.appendChild(o);
+    }
   });
 }
 
+function cargarCapacidades(){
+  capacidad.innerHTML='<option value="">Capacidad</option>';
+  data.filter(x=>x.p==producto.value&&x.m==modelo.value)
+    .forEach(x=>{
+      let o=document.createElement("option");
+      o.value=o.textContent=x.c;
+      capacidad.appendChild(o);
+    });
+}
+
 function calcular(){
-  let k=modelo.value+"-"+gb.value;
-  if(precios[k]){
-    let [c,v]=precios[k];
-    precioCompraCliente.textContent="$"+c;
-    precioCompraAdmin.textContent="$"+c;
-    precioVentaAdmin.textContent="$"+v;
-    ganancia.textContent="$"+(v-c);
+  let x=data.find(x=>x.p==producto.value&&x.m==modelo.value&&x.c==capacidad.value);
+  if(x){
+    precioCompraCliente.textContent="$"+x.buy;
+    precioCompraAdmin.textContent="$"+x.buy;
+    precioVentaAdmin.textContent="$"+x.sell;
+    ganancia.textContent="$"+(x.sell-x.buy);
   }else{
     precioCompraCliente.textContent="—";
     precioCompraAdmin.textContent="—";
@@ -188,85 +200,24 @@ function mostrarCliente(){
   clientePanel.classList.remove("hidden");
   adminPanel.classList.add("hidden");
   loginPanel.classList.add("hidden");
-  panelModelos.classList.add("hidden");
+  adminActivo=false;
 }
 
-function pedirPin(){
-  clientePanel.classList.add("hidden");
-  loginPanel.classList.remove("hidden");
+function toggleAdmin(){
+  if(adminActivo){mostrarCliente();}
+  else{clientePanel.classList.add("hidden");loginPanel.classList.remove("hidden");}
 }
 
 function validarPin(){
   if(pinInput.value===PIN){
     loginPanel.classList.add("hidden");
     adminPanel.classList.remove("hidden");
+    adminActivo=true;
     pinInput.value="";
   }else alert("PIN incorrecto");
 }
 
-function guardarModelo(){
-  let m=newModelo.value.trim();
-  let g=newGB.value.trim();
-  let c=parseInt(newCompra.value);
-  let v=parseInt(newVenta.value);
-  if(!m||!g||!c||!v){alert("Completa todo");return;}
-  precios[m+"-"+g]=[c,v];
-  localStorage.setItem("precios",JSON.stringify(precios));
-  cargarModelos();
-  newModelo.value=newGB.value=newCompra.value=newVenta.value="";
-}
-
-/* TOGGLE ADMIN MODELOS */
-function abrirAdminModelos(){
-
-  if(!panelModelos.classList.contains("hidden")){
-    panelModelos.classList.add("hidden");
-    return;
-  }
-
-  panelModelos.innerHTML="";
-  panelModelos.classList.remove("hidden");
-
-  Object.keys(precios).forEach(k=>{
-    let [m,g]=k.split("-");
-    let [c,v]=precios[k];
-
-    panelModelos.innerHTML+=`
-      <div class="model-row">
-        <div class="model-info">
-          <b>iPhone ${nombreBonito(m)}</b> · ${g}GB<br>
-          $${c} → $${v}
-        </div>
-        <div class="model-actions">
-          <button onclick="editarModelo('${k}')">Editar</button>
-          <button class="eliminar" onclick="eliminarClave('${k}')">X</button>
-        </div>
-      </div>
-    `;
-  });
-}
-
-function editarModelo(k){
-  let [m,g]=k.split("-");
-  let [c,v]=precios[k];
-  newModelo.value=m;
-  newGB.value=g;
-  newCompra.value=c;
-  newVenta.value=v;
-  panelModelos.classList.add("hidden");
-}
-
-function eliminarClave(k){
-  if(confirm("¿Eliminar modelo?")){
-    delete precios[k];
-    localStorage.setItem("precios",JSON.stringify(precios));
-    abrirAdminModelos();
-    cargarModelos();
-  }
-}
-
-cargarModelos();
+cargarTodo();
 </script>
-
 </body>
 </html>
